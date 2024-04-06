@@ -40,7 +40,7 @@ function HelpBot() {
 
   return (
     <div>
-      <h1 style={{textAlign:'center'}}>✦ DEMO-Project ✦</h1>
+      <h1 style={{textAlign:'center'}}>✦ Police BOT ✦</h1>
       {isLoading && <div className='botloading'><LuLoader fontSize={40}></LuLoader></div>}
       {!isLoading && <p className='output'>{response}</p>}
       <form onSubmit={handleSubmit}>
