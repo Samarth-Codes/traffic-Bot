@@ -32,7 +32,7 @@ function HelpBot() {
     event.preventDefault();
 
     setIsLoading(true); 
-    const result = await model.generateContent(JSON.stringify({ jsonInput: selectedJSON }) + "You have to use the given data to answer this questions, if not in the data then say that its not mentioned and answer on your behalf, also talk like indian army officer bot , and talk only in +" + language + " , INPUT:" + prompt);
+    const result = await model.generateContent(JSON.stringify({ jsonInput: selectedJSON }) + "You have to use the given data to answer this questions, if not in the data then say that its not mentioned and answer on your behalf, also talk like indian police officer bot , and talk only in +" + language + " , INPUT:" + prompt);
     setResponse(result.response.text());
     setIsLoading(false); 
   };
