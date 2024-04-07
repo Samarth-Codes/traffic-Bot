@@ -1,4 +1,4 @@
-# Indian Law Chat Bot
+# Indian Police Chat Bot
 
 ## Overview
 This project is an AI-based chat bot designed to provide information on the Indian Penal Code (IPC), Criminal Procedure Code (CrPC) acts, and various Indian laws. Users can input hypothetical situations, and the bot will utilize its knowledge of Indian laws to provide outputs detailing potential punishments and fines.
