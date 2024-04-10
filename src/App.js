@@ -5,7 +5,7 @@ import { SampleJSONData } from './jsondata';
 import { LuLanguages, LuLoader, LuPanelLeftOpen  } from "react-icons/lu";
 
 function HelpBot() {
-  const genAI = new GoogleGenerativeAI('AIzaSyBt50eoRnb-R1BummegUTqeX2l7ieNmWkM');
+  const genAI = new GoogleGenerativeAI(thhavu);
   const safetySettings = [{ category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }];
   const model = genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
   const [selectedJSON, setSelectedJSON] = useState(SampleJSONData[0].data);
