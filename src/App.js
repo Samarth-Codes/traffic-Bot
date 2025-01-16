@@ -6,7 +6,7 @@ import { LuLanguages, LuLoader, LuPanelLeftOpen  } from "react-icons/lu";
 import GitHubRedirect from './GitHubRedirect'; // Ensure this import path is correct
 
 function HelpBot() {
-  const genAI = new GoogleGenerativeAI('AIzaSyBt50eoRnb-R1BummegUTqeX2l7ieNmWkM');
+  const genAI = new GoogleGenerativeAI('AIzaSyDd33EAz2WGpjvC8GLIWOl4REEtPIbBV0s');
   const safetySettings = [{ category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }];
   const model = genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
   const [selectedJSON, setSelectedJSON] = useState(SampleJSONData[0].data);
@@ -33,7 +33,7 @@ function HelpBot() {
     event.preventDefault();
 
     setIsLoading(true);
-    const result = await model.generateContent(JSON.stringify({ jsonInput: selectedJSON }) + "You have to use the given data to answer this questions, if not in the data then say that its not mentioned and answer on your behalf, also talk like indian police officer bot , and talk only in +" + language + " , INPUT:" + prompt + ", also while answering make sure to mention all the acts, clause and actions that can be and will be taken by the Indian Govenment based on the crime that has been commited and do not use markdown language in the output");
+    const result = await model.generateContent(JSON.stringify({ jsonInput: selectedJSON }) + "You have to use the given data to answer this questions, if not in the data then say that its not mentioned and answer on your behalf, also talk like indian traffic  police officer bot , and talk only in +" + language + " , INPUT:" + prompt + ", also while answering make sure to mention all the acts, clause and actions that can be and will be taken by the Indian Govenment based on the crime that has been commited and do not use markdown language in the output");
     setResponse(result.response.text());
     setIsLoading(false);
   };
@@ -41,7 +41,7 @@ function HelpBot() {
   return (
     <div style={{ position: 'relative' }}>
       <GitHubRedirect /> {/* Add the GitHubRedirect component here */}
-      <h1 style={{textAlign:'center'}}>✦ Police BOT ✦</h1>
+      <h1 style={{textAlign:'center'}}>✦ Traffic BOT ✦</h1>
       {isLoading && <div className='botloading'><LuLoader fontSize={40}></LuLoader></div>}
       {!isLoading && <p className='output'>{response}</p>}
       <form onSubmit={handleSubmit}>
@@ -107,3 +107,4 @@ function HelpBot() {
 }
 
 export default HelpBot;
+
