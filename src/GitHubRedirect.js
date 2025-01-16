@@ -4,7 +4,7 @@ import './GitHubRedirect.css'; // Optional: Add custom styling
 
 const GitHubRedirect = () => {
   const handleRedirect = () => {
-    window.open('https://github.com/Vansh-Choudhary/POLICE-BOT', '_blank'); // Replace with your actual GitHub repository URL
+    window.open('https://github.com/Samarth-Codes', '_blank'); // Replace with your actual GitHub repository URL
   };
 
   return (
@@ -15,3 +15,4 @@ const GitHubRedirect = () => {
 };
 
 export default GitHubRedirect;
+
