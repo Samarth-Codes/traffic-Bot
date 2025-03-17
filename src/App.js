@@ -6,7 +6,7 @@ import { LuLanguages, LuLoader, LuPanelLeftOpen  } from "react-icons/lu";
 import GitHubRedirect from './GitHubRedirect'; // Ensure this import path is correct
 
 function HelpBot() {
-  const genAI = new GoogleGenerativeAI('AIzaSyDd33EAz2WGpjvC8GLIWOl4REEtPIbBV0s');
+  const genAI = new GoogleGenerativeAI('AIzaSyAevR0tc_pehf2UqnSSHmVH9w_ic1pwQ_0');
   const safetySettings = [{ category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }];
   const model = genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
   const [selectedJSON, setSelectedJSON] = useState(SampleJSONData[0].data);
