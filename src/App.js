@@ -2,22 +2,31 @@ import React, { useState } from 'react';
 import './bot.css';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { SampleJSONData } from './jsondata';
-import { LuLanguages, LuLoader, LuPanelLeftOpen  } from "react-icons/lu";
+import { LuLanguages, LuLoader } from "react-icons/lu";
 import GitHubRedirect from './GitHubRedirect'; // Ensure this import path is correct
 
 function HelpBot() {
-  const genAI = new GoogleGenerativeAI('AIzaSyBBpeI6IpfhoYgMJSOz3Od_7CoIYL_YOkY');
-  const safetySettings = [{ category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }];
+  // Direct API key (⚠️ Not recommended for production)
+  const API_KEY = "AIzaSyBBpeI6IpfhoYgMJSOz3Od_7CoIYL_YOkY";
+
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  const safetySettings = [
+    {
+      category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+      threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+  ];
   const model = genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
+
   const [selectedJSON, setSelectedJSON] = useState(SampleJSONData[0].data);
   const [prompt, setPrompt] = useState('');
-  const [language, setLanguage] = useState('English'); // State for selected language
+  const [language, setLanguage] = useState('English'); // Default language
   const [response, setResponse] = useState('Welcome to Help Desk 🙏');
   const [isLoading, setIsLoading] = useState(false); // Loading state
 
   const handleJSONSelect = (event) => {
     const selectedId = parseInt(event.target.value);
-    const selectedData = SampleJSONData.find(item => item.id === selectedId).data;
+    const selectedData = SampleJSONData.find(item => item.id === selectedId)?.data;
     setSelectedJSON(selectedData);
   };
 
@@ -33,21 +42,44 @@ function HelpBot() {
     event.preventDefault();
 
     setIsLoading(true);
-    const result = await model.generateContent(JSON.stringify({ jsonInput: selectedJSON }) + "You have to use the given data to answer this questions, if not in the data then say that its not mentioned and answer on your behalf, also talk like indian traffic  police officer bot , and talk only in +" + language + " , INPUT:" + prompt + ", also while answering make sure to mention all the acts, clause and actions that can be and will be taken by the Indian Govenment based on the crime that has been commited and do not use markdown language in the output");
-    setResponse(result.response.text());
+    setResponse(''); // Clear previous response
+
+    try {
+      const inputText = JSON.stringify({
+        jsonInput: selectedJSON,
+        instruction: `You have to use the given data to answer this question. If it's not in the data, say that it's not mentioned. Answer as an Indian traffic police officer bot, and speak only in ${language}. Also, mention all the acts, clauses, and actions the Indian Government can take based on the crime. Do not use markdown.`,
+        userPrompt: prompt,
+      });
+
+      const result = await model.generateContent(inputText);
+      const textResponse = await result.response.text(); // Ensure text is accessed correctly
+      setResponse(textResponse || "⚠️ No response from AI");
+    } catch (error) {
+      console.error("API Request Failed:", error);
+      setResponse("⚠️ Error: Unable to fetch response. Please try again.");
+    }
+
     setIsLoading(false);
   };
 
   return (
     <div style={{ position: 'relative' }}>
-      <GitHubRedirect /> {/* Add the GitHubRedirect component here */}
-      <h1 style={{textAlign:'center'}}>✦ Traffic BOT ✦</h1>
-      {isLoading && <div className='botloading'><LuLoader fontSize={40}></LuLoader></div>}
-      {!isLoading && <p className='output'>{response}</p>}
+      <GitHubRedirect />
+      <h1 style={{ textAlign: 'center' }}>✦ Traffic BOT ✦</h1>
+
+      {isLoading ? (
+        <div className="botloading">
+          <LuLoader fontSize={40} />
+        </div>
+      ) : (
+        <p className="output">{response}</p>
+      )}
+
       <form onSubmit={handleSubmit}>
-        <div className='BOT_optionContainer'>
+        {/* JSON Selection */}
+        <div className="BOT_optionContainer">
           {SampleJSONData.map(json => (
-            <div className='BOT_optionblock' key={json.id}>
+            <div className="BOT_optionblock" key={json.id}>
               <input
                 type="radio"
                 id={`json${json.id}`}
@@ -60,10 +92,11 @@ function HelpBot() {
             </div>
           ))}
         </div>
-        <div className='BOT_optionContainer'>
-          <div className='BOT_optionblock'> 
-          <LuLanguages></LuLanguages>
 
+        {/* Language Selection */}
+        <div className="BOT_optionContainer">
+          <div className="BOT_optionblock">
+            <LuLanguages />
             <input
               type="radio"
               id="englishLanguage"
@@ -74,8 +107,8 @@ function HelpBot() {
             />
             <label htmlFor="englishLanguage">English</label>
           </div>
-          <div className='BOT_optionblock'>
-            <LuLanguages></LuLanguages>
+          <div className="BOT_optionblock">
+            <LuLanguages />
             <input
               type="radio"
               id="hindiLanguage"
@@ -87,24 +120,40 @@ function HelpBot() {
             <label htmlFor="hindiLanguage">Hindi</label>
           </div>
         </div>
+
+        {/* Input Box */}
         <div>
           <input
             type="text"
             id="promptInput"
-            autoComplete='false'
-            aria-autocomplete='false'
+            autoComplete="off"
+            className="BOT_inputbox"
+            placeholder="Enter Your Query / अपनी समस्या दर्ज करें"
             value={prompt}
-            className='BOT_inputbox'
-            placeholder='Enter Your Query / अपनी समस्या दर्ज करें'
             onChange={handlePromptChange}
           />
         </div>
 
-        <button type="submit" style={{color: 'white',cursor:'pointer', background: 'linear-gradient(45deg, #535353, #767676, #4c4c4c)', width: '50%', margin: '4vh 25%', fontSize: '2rem', borderRadius: '0.7rem', padding: '0 1rem', border: 'none'}}>Submit / जमा करें</button>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          style={{
+            color: 'white',
+            cursor: 'pointer',
+            background: 'linear-gradient(45deg, #535353, #767676, #4c4c4c)',
+            width: '50%',
+            margin: '4vh 25%',
+            fontSize: '2rem',
+            borderRadius: '0.7rem',
+            padding: '0 1rem',
+            border: 'none',
+          }}
+        >
+          Submit / जमा करें
+        </button>
       </form>
     </div>
   );
 }
 
 export default HelpBot;
-
