@@ -16,7 +16,8 @@ function HelpBot() {
       threshold: HarmBlockThreshold.BLOCK_NONE,
     },
   ];
-  const model = genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
+  const model = genAI.getGenerativeModel({ model: "gemini-pro-latest", safetySettings });
+
 
   const [selectedJSON, setSelectedJSON] = useState(SampleJSONData[0].data);
   const [prompt, setPrompt] = useState('');
@@ -51,7 +52,10 @@ function HelpBot() {
         userPrompt: prompt,
       });
 
-      const result = await model.generateContent(inputText);
+    const result = await model.generateContent({
+  contents: [{ role: "user", parts: [{ text: prompt }] }]
+});
+
       const textResponse = await result.response.text(); // Ensure text is accessed correctly
       setResponse(textResponse || "⚠️ No response from AI");
     } catch (error) {
