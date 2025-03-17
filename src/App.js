@@ -16,7 +16,7 @@ function HelpBot() {
       threshold: HarmBlockThreshold.BLOCK_NONE,
     },
   ];
-  const model = genAI.getGenerativeModel({ model: "gemini-pro-latest", safetySettings });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest", safetySettings });
 
 
   const [selectedJSON, setSelectedJSON] = useState(SampleJSONData[0].data);
