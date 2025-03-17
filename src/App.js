@@ -1,24 +1,13 @@
 import React, { useState } from 'react';
 import './bot.css';
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
-import { SampleJSONData } from './jsondata';
 import { LuLanguages, LuLoader } from "react-icons/lu";
+import { SampleJSONData } from './jsondata';
 import GitHubRedirect from './GitHubRedirect'; // Ensure this import path is correct
 
+const API_KEY = "AIzaSyAoo7AZS_YumRhdY7krd2cBJY6DrfHyIP8";
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
 function HelpBot() {
-  // Direct API key (⚠️ Not recommended for production)
-  const API_KEY = "AIzaSyBBpeI6IpfhoYgMJSOz3Od_7CoIYL_YOkY";
-
-  const genAI = new GoogleGenerativeAI(API_KEY);
-  const safetySettings = [
-    {
-      category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
-  ];
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest", safetySettings });
-
-
   const [selectedJSON, setSelectedJSON] = useState(SampleJSONData[0].data);
   const [prompt, setPrompt] = useState('');
   const [language, setLanguage] = useState('English'); // Default language
@@ -46,18 +35,32 @@ function HelpBot() {
     setResponse(''); // Clear previous response
 
     try {
-      const inputText = JSON.stringify({
-        jsonInput: selectedJSON,
-        instruction: `You have to use the given data to answer this question. If it's not in the data, say that it's not mentioned. Answer as an Indian traffic police officer bot, and speak only in ${language}. Also, mention all the acts, clauses, and actions the Indian Government can take based on the crime. Do not use markdown.`,
-        userPrompt: prompt,
+      const requestBody = {
+        contents: [
+          {
+            parts: [
+              {
+                text: `You have to use the given data to answer this question. If it's not in the data, say that it's not mentioned. Answer as an Indian traffic police officer bot, and speak only in ${language}. Also, mention all the acts, clauses, and actions the Indian Government can take based on the crime. Do not use markdown.\n\nUser Query: ${prompt}\n\nData: ${JSON.stringify(selectedJSON)}`,
+              },
+            ],
+          },
+        ],
+      };
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
       });
 
-    const result = await model.generateContent({
-  contents: [{ role: "user", parts: [{ text: prompt }] }]
-});
-
-      const textResponse = await result.response.text(); // Ensure text is accessed correctly
-      setResponse(textResponse || "⚠️ No response from AI");
+      const data = await response.json();
+      if (data && data.candidates && data.candidates.length > 0) {
+        setResponse(data.candidates[0].content.parts[0].text);
+      } else {
+        setResponse("⚠️ No response from AI");
+      }
     } catch (error) {
       console.error("API Request Failed:", error);
       setResponse("⚠️ Error: Unable to fetch response. Please try again.");
